@@ -15,10 +15,15 @@ class App extends Component {
 		this.getBooks();
 	}
 
+	getURL() {
+		if (process.env.REACT_APP_BOOKS_API) return process.env.REACT_APP_BOOKS_API;
+    return LOCAL_HOST_API; 
+    
+    
+	}
+
 	async getBooks() {
-		const response = await fetch(
-			process.env.REACT_APP_BOOKS_API + "/books" || LOCAL_HOST_API + "/books"
-		);
+		const response = await fetch(this.getURL() + "/books");
 		const data = await response.json();
 		this.setState({
 			books: data
