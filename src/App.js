@@ -1,40 +1,48 @@
 import React, { Component } from "react";
 import "./App.css";
-
-const LOCAL_HOST_API = "http://localhost:3000";
+import { getEndpoint } from "./utils";
 
 class App extends Component {
 	constructor() {
 		super();
 		this.state = {
-			books: []
+			books: [],
+			authors: []
 		};
 	}
 
 	componentDidMount() {
 		this.getBooks();
-	}
-
-	getURL() {
-		if (process.env.REACT_APP_BOOKS_API) return process.env.REACT_APP_BOOKS_API;
-    return LOCAL_HOST_API; 
-    
-    
+		this.getAuthors();
 	}
 
 	async getBooks() {
-		const response = await fetch(this.getURL() + "/books");
+		await this._getDataAndUpdateState(getEndpoint("/books"), "books");
+	}
+
+	async getAuthors() {
+		await this._getDataAndUpdateState(getEndpoint("/authors"), "authors");
+	}
+
+	async _getDataAndUpdateState(endpoint, stateKey) {
+		const response = await fetch(endpoint);
 		const data = await response.json();
 		this.setState({
-			books: data
+			[stateKey]: data
 		});
 	}
 
 	render() {
 		return (
 			<div>
+				<h1>Books</h1>
 				{this.state.books.map(book => {
 					return <li key={book._id}>{book.title}</li>;
+				})}
+
+				<h1>Authors</h1>
+				{this.state.authors.map(author => {
+					return <li key={author._id}>{author.name}</li>;
 				})}
 			</div>
 		);
